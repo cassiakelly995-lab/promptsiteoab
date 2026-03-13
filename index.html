@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biblioteca de Prompts — OAB SP</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #0d1117;
+  --surface:   #161b22;
+  --card:      #1c2330;
+  --card-h:    #212c3f;
+  --border:    #30363d;
+  --border-h:  #d4a017;
+  --gold:      #d4a017;
+  --gold-l:    #f0c040;
+  --gold-d:    #9a7010;
+  --text:      #e6edf3;
+  --muted:     #7d8590;
+  --green:     #1a7f4b;
+  --green-l:   #3dba72;
+  --red:       #8b1c1c;
+  --blue:      #1a4a8a;
+  --teal:      #0e6a6a;
+  --purple:    #4a1a7a;
+  --orange:    #7a3a00;
+  --sidebar-w: 252px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+html{scroll-behavior:smooth}
+
+body{
+  font-family:'Source Sans 3',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+}
+
+/* ─── SIDEBAR ─── */
+#sidebar{
+  width:var(--sidebar-w);
+  min-height:100vh;
+  background:var(--surface);
+  border-right:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  position:fixed;
+  top:0;left:0;bottom:0;
+  z-index:50;
+  overflow-y:auto;
+}
+.sb-logo{
+  padding:24px 20px 20px;
+  border-bottom:1px solid var(--border);
+}
+.sb-logo-badge{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:8px;
+}
+.badge-icon{
+  width:40px;height:40px;
+  background:var(--gold);
+  border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;
+  font-size:16px;font-weight:700;
+  color:var(--bg);
+}
+.sb-logo h1{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.05rem;font-weight:700;
+  color:var(--text);line-height:1.2;
+}
+.sb-logo p{
+  font-size:0.68rem;
+  color:var(--muted);
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+}
+.sb-source{
+  margin:10px 20px 0;
+  padding:8px 10px;
+  background:rgba(212,160,23,0.08);
+  border:1px solid rgba(212,160,23,0.2);
+  border-radius:6px;
+  font-size:0.65rem;
+  color:var(--gold);
+  line-height:1.4;
+}
+.sb-source strong{display:block;margin-bottom:2px;font-size:0.67rem;}
+
+.sb-section{
+  padding:16px 12px 4px;
+}
+.sb-section-label{
+  font-size:0.62rem;
+  text-transform:uppercase;
+  letter-spacing:0.1em;
+  color:var(--muted);
+  padding:0 8px;
+  margin-bottom:4px;
+}
+.sb-link{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:7px 8px;
+  border-radius:6px;
+  cursor:pointer;
+  font-size:0.8rem;
+  color:var(--muted);
+  transition:all 0.15s;
+  border:none;background:none;
+  width:100%;text-align:left;
+  text-decoration:none;
+}
+.sb-link:hover{background:var(--card);color:var(--text);}
+.sb-link.active{background:rgba(212,160,23,0.12);color:var(--gold);}
+.sb-link .ico{font-size:0.85rem;flex-shrink:0;}
+.sb-link .cnt{
+  margin-left:auto;
+  background:var(--border);
+  color:var(--muted);
+  font-size:0.62rem;
+  padding:1px 5px;
+  border-radius:10px;
+  font-weight:600;
+}
+.sb-link.active .cnt{background:rgba(212,160,23,0.2);color:var(--gold);}
+
+.sb-contacts{
+  margin-top:auto;
+  padding:16px 20px;
+  border-top:1px solid var(--border);
+}
+.sb-contacts p{font-size:0.68rem;color:var(--muted);line-height:1.7;}
+.sb-contacts strong{color:var(--text);font-size:0.7rem;}
+
+/* ─── MAIN ─── */
+#main{
+  margin-left:var(--sidebar-w);
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+}
+
+/* ─── TOPBAR ─── */
+#topbar{
+  position:sticky;top:0;z-index:40;
+  background:rgba(13,17,23,0.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:12px 32px;
+  display:flex;align-items:center;gap:16px;
+  flex-wrap:wrap;
+}
+.search-wrap{
+  flex:1;min-width:200px;
+  position:relative;
+}
+.search-wrap input{
+  width:100%;
+  padding:9px 16px 9px 38px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:8px;
+  color:var(--text);
+  font-family:'Source Sans 3',sans-serif;
+  font-size:0.85rem;
+  outline:none;
+  transition:border-color 0.2s;
+}
+.search-wrap input::placeholder{color:var(--muted);}
+.search-wrap input:focus{border-color:var(--gold);}
+.search-wrap .si{
+  position:absolute;left:12px;top:50%;
+  transform:translateY(-50%);
+  color:var(--muted);font-size:0.9rem;
+}
+.top-pills{display:flex;gap:6px;flex-wrap:wrap;}
+.pill{
+  padding:5px 12px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:20px;
+  font-size:0.73rem;
+  color:var(--muted);
+  cursor:pointer;
+  transition:all 0.15s;
+  white-space:nowrap;
+}
+.pill:hover{border-color:var(--gold);color:var(--gold-l);}
+.pill.active{background:var(--gold);border-color:var(--gold);color:var(--bg);font-weight:600;}
+.top-stat{
+  font-size:0.72rem;
+  color:var(--muted);
+  white-space:nowrap;
+}
+.top-stat strong{color:var(--gold);font-size:0.85rem;}
+
+/* ─── HERO ─── */
+.hero{
+  padding:40px 32px 32px;
+  background:linear-gradient(160deg,#0d1a2d 0%,var(--bg) 60%);
+  border-bottom:1px solid var(--border);
+  position:relative;
+  overflow:hidden;
+}
+.hero::before{
+  content:'OAB SP';
+  position:absolute;
+  right:-20px;top:-10px;
+  font-family:'Cormorant Garamond',serif;
+  font-size:10rem;font-weight:700;
+  color:rgba(212,160,23,0.04);
+  line-height:1;
+  pointer-events:none;
+  user-select:none;
+}
+.hero-row{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.hero h2{
+  font-family:'Cormorant Garamond',serif;
+  font-size:2.4rem;font-weight:700;
+  color:var(--text);
+  line-height:1.1;
+  max-width:500px;
+}
+.hero h2 em{color:var(--gold);font-style:italic;}
+.hero p{
+  font-size:0.88rem;color:var(--muted);
+  max-width:520px;
+  line-height:1.6;
+  margin-top:10px;
+}
+.hero-badges{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.h-badge{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:14px 20px;
+  text-align:center;
+  min-width:90px;
+}
+.h-badge-num{
+  font-family:'Cormorant Garamond',serif;
+  font-size:2rem;font-weight:700;
+  color:var(--gold);
+  line-height:1;
+}
+.h-badge-lbl{
+  font-size:0.65rem;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  color:var(--muted);
+  margin-top:3px;
+}
+.source-badge{
+  margin-top:16px;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  background:rgba(212,160,23,0.07);
+  border:1px solid rgba(212,160,23,0.18);
+  border-radius:20px;
+  padding:5px 14px;
+  font-size:0.72rem;
+  color:var(--gold);
+}
+
+/* ─── CONTENT ─── */
+#content{padding:32px;flex:1;}
+
+.section-block{margin-bottom:48px;}
+.section-block[data-cat]{display:block;}
+.section-block.hidden{display:none;}
+
+.sec-head{
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:20px;
+  padding-bottom:12px;
+  border-bottom:1px solid var(--border);
+}
+.sec-icon{
+  width:36px;height:36px;
+  border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;
+  flex-shrink:0;
+}
+.sec-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.35rem;font-weight:700;
+  color:var(--text);
+}
+.sec-url{
+  margin-left:auto;
+  font-size:0.68rem;
+  font-family:'JetBrains Mono',monospace;
+  color:var(--muted);
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:4px;
+  padding:3px 8px;
+  white-space:nowrap;
+  text-decoration:none;
+  transition:color 0.15s;
+}
+.sec-url:hover{color:var(--gold);}
+.sec-count{
+  background:rgba(212,160,23,0.12);
+  color:var(--gold);
+  border-radius:20px;
+  padding:2px 8px;
+  font-size:0.68rem;
+  font-weight:600;
+}
+
+/* ─── CARD GRID ─── */
+.cards-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+  gap:14px;
+}
+
+/* ─── PROMPT CARD ─── */
+.p-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:10px;
+  overflow:hidden;
+  transition:all 0.2s;
+  position:relative;
+  display:flex;flex-direction:column;
+}
+.p-card::after{
+  content:'';
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:3px;
+  background:var(--gold);
+  transform:scaleY(0);
+  transform-origin:top;
+  transition:transform 0.2s;
+}
+.p-card:hover{border-color:var(--border-h);background:var(--card-h);}
+.p-card:hover::after{transform:scaleY(1);}
+
+.p-card-head{
+  padding:14px 16px 10px;
+  display:flex;align-items:flex-start;gap:10px;
+}
+.p-tag{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 8px;
+  border-radius:4px;
+  font-size:0.63rem;font-weight:600;
+  text-transform:uppercase;letter-spacing:0.05em;
+  white-space:nowrap;
+  flex-shrink:0;
+}
+.t-restrita{background:rgba(26,127,75,0.15);color:#3dba72;}
+.t-inscricao{background:rgba(74,26,122,0.2);color:#a06ae0;}
+.t-certif{background:rgba(26,74,138,0.2);color:#5b9ee6;}
+.t-financeiro{background:rgba(212,160,23,0.12);color:var(--gold);}
+.t-etica{background:rgba(139,28,28,0.2);color:#e07070;}
+.t-servicos{background:rgba(14,106,106,0.2);color:#4dcfcf;}
+.t-universo{background:rgba(122,58,0,0.2);color:#e0a060;}
+.t-email{background:rgba(26,127,75,0.12);color:#3dba72;}
+.t-institucional{background:rgba(100,100,100,0.15);color:#aaa;}
+
+.p-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:0.98rem;font-weight:600;
+  color:var(--text);
+  line-height:1.3;
+  margin-top:2px;
+}
+.p-body{
+  padding:0 16px 14px;
+  flex:1;
+}
+.p-prompt{
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:7px;
+  padding:12px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:0.74rem;
+  color:#8b949e;
+  line-height:1.6;
+}
+.p-prompt .hl{color:var(--gold-l);font-weight:500;}
+.p-prompt .hl2{color:#79c0ff;}
+.p-prompt .hl3{color:#a5d6ff;}
+
+.p-foot{
+  padding:10px 16px;
+  border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:8px;
+}
+.p-link{
+  font-size:0.65rem;
+  font-family:'JetBrains Mono',monospace;
+  color:var(--muted);
+  text-decoration:none;
+  flex:1;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.p-link:hover{color:var(--gold);}
+.btn-cp{
+  padding:5px 12px;
+  background:rgba(212,160,23,0.1);
+  border:1px solid rgba(212,160,23,0.3);
+  border-radius:5px;
+  color:var(--gold);
+  font-size:0.72rem;font-weight:600;
+  cursor:pointer;
+  transition:all 0.15s;
+  white-space:nowrap;
+  font-family:'Source Sans 3',sans-serif;
+}
+.btn-cp:hover{background:var(--gold);color:var(--bg);}
+.btn-cp.ok{background:#1a7f4b;border-color:#1a7f4b;color:#fff;}
+
+/* ─── EMAIL SECTION ─── */
+.email-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(340px,1fr));
+  gap:14px;
+}
+.e-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:10px;
+  overflow:hidden;
+  transition:border-color 0.2s;
+}
+.e-card:hover{border-color:#3dba72;}
+.e-head{
+  padding:14px 16px 10px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+}
+.e-from{font-size:0.68rem;color:var(--muted);}
+.e-from strong{color:#3dba72;display:block;}
+.e-subj{
+  font-size:0.65rem;
+  background:rgba(61,186,114,0.1);
+  border:1px solid rgba(61,186,114,0.2);
+  color:#3dba72;
+  padding:2px 8px;border-radius:4px;
+  font-family:'JetBrains Mono',monospace;
+  white-space:nowrap;
+}
+.e-body{padding:14px 16px;}
+.e-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:0.95rem;font-weight:600;
+  color:var(--text);margin-bottom:8px;
+}
+.e-prompt{
+  font-family:'JetBrains Mono',monospace;
+  font-size:0.72rem;color:#8b949e;
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:11px;
+  line-height:1.6;
+}
+.e-prompt .hl{color:#79c0ff;font-weight:500;}
+.e-foot{
+  padding:8px 16px;
+  border-top:1px solid var(--border);
+  display:flex;justify-content:flex-end;
+}
+
+/* ─── INFO BOX ─── */
+.info-box{
+  background:rgba(212,160,23,0.06);
+  border:1px solid rgba(212,160,23,0.18);
+  border-radius:8px;
+  padding:16px 20px;
+  margin-bottom:20px;
+  font-size:0.8rem;
+  color:#c9a550;
+  line-height:1.7;
+}
+.info-box strong{color:var(--gold-l);}
+
+/* ─── SERVICE MAP ─── */
+.svc-map{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:10px;
+  margin-bottom:32px;
+}
+.svc-chip{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:10px 14px;
+  display:flex;align-items:center;gap:8px;
+  transition:all 0.15s;
+  text-decoration:none;
+}
+.svc-chip:hover{border-color:var(--gold);background:var(--card-h);}
+.svc-chip-ico{font-size:1rem;flex-shrink:0;}
+.svc-chip-txt{
+  font-size:0.78rem;color:var(--text);
+  font-weight:500;line-height:1.2;
+}
+.svc-chip-url{
+  display:block;
+  font-size:0.6rem;
+  font-family:'JetBrains Mono',monospace;
+  color:var(--muted);
+  margin-top:2px;
+}
+
+/* ─── ENDERECOS ─── */
+.addr-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:12px;
+}
+.addr-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:16px;
+}
+.addr-type{
+  font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;
+  color:var(--gold);margin-bottom:6px;font-weight:600;
+}
+.addr-text{font-size:0.8rem;color:var(--text);line-height:1.6;}
+.addr-cep{font-size:0.72rem;color:var(--muted);margin-top:3px;font-family:'JetBrains Mono',monospace;}
+
+/* ─── TOAST ─── */
+#toast{
+  position:fixed;bottom:24px;right:24px;
+  background:var(--green);color:#fff;
+  padding:10px 18px;border-radius:8px;
+  font-size:0.82rem;font-weight:500;
+  transform:translateY(70px);opacity:0;
+  transition:all 0.3s;z-index:999;
+  box-shadow:0 8px 24px rgba(0,0,0,0.4);
+  display:flex;align-items:center;gap:6px;
+}
+#toast.on{transform:translateY(0);opacity:1;}
+
+/* ─── NO RESULT ─── */
+#no-result{display:none;padding:60px;text-align:center;}
+#no-result.on{display:block;}
+#no-result p{font-size:1rem;color:var(--muted);}
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:var(--muted);}
+
+@media(max-width:860px){
+  #sidebar{display:none;}
+  #main{margin-left:0;}
+  #topbar{padding:10px 16px;}
+  #content{padding:16px;}
+  .hero{padding:24px 16px;}
+  .hero h2{font-size:1.7rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════ SIDEBAR ══════════ -->
+<aside id="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-badge">
+      <div class="badge-icon">OAB</div>
+      <div>
+        <h1>Biblioteca de Prompts</h1>
+        <p>Seção São Paulo</p>
+      </div>
+    </div>
+    <div class="sb-source">
+      <strong>⚠ Fonte única e verificada</strong>
+      Conteúdo extraído exclusivamente de<br>
+      <strong>oabsp.org.br/servicos</strong>
+    </div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-section-label">Navegação</div>
+    <button class="sb-link active" onclick="showCat('all',this)"><span class="ico">◈</span> Todos os prompts <span class="cnt" id="cnt-all">0</span></button>
+    <button class="sb-link" onclick="showCat('restrita',this)"><span class="ico">🔒</span> Área Restrita <span class="cnt" id="cnt-restrita">0</span></button>
+    <button class="sb-link" onclick="showCat('inscricao',this)"><span class="ico">📝</span> Inscrição & Docs <span class="cnt" id="cnt-inscricao">0</span></button>
+    <button class="sb-link" onclick="showCat('certif',this)"><span class="ico">🔐</span> Certificação Digital <span class="cnt" id="cnt-certif">0</span></button>
+    <button class="sb-link" onclick="showCat('financeiro',this)"><span class="ico">💰</span> Financeiro <span class="cnt" id="cnt-financeiro">0</span></button>
+    <button class="sb-link" onclick="showCat('servicos',this)"><span class="ico">🛠</span> Serviços & Programas <span class="cnt" id="cnt-servicos">0</span></button>
+    <button class="sb-link" onclick="showCat('etica',this)"><span class="ico">⚖️</span> Ética & Prerrog. <span class="cnt" id="cnt-etica">0</span></button>
+    <button class="sb-link" onclick="showCat('universo',this)"><span class="ico">🌐</span> Universo OAB SP <span class="cnt" id="cnt-universo">0</span></button>
+    <button class="sb-link" onclick="showCat('institucional',this)"><span class="ico">🏛</span> Institucional <span class="cnt" id="cnt-institucional">0</span></button>
+    <button class="sb-link" onclick="showCat('email',this)"><span class="ico">✉️</span> E-mails Internos <span class="cnt" id="cnt-email">0</span></button>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-section-label">Acesso Rápido — Site</div>
+    <a class="sb-link" href="https://www.oabsp.org.br/servicos" target="_blank"><span class="ico">🔗</span> Serviços (oabsp.org.br)</a>
+    <a class="sb-link" href="https://www.oabsp.org.br/duvidas-frequentes" target="_blank"><span class="ico">❓</span> Dúvidas Frequentes</a>
+    <a class="sb-link" href="https://www2.oabsp.org.br/asp/consultaInscritos/consultaHome.asp" target="_blank"><span class="ico">🔍</span> Consulta de Inscritos</a>
+    <a class="sb-link" href="https://webmail.oabsp.org.br" target="_blank"><span class="ico">📧</span> Email da Advocacia</a>
+    <a class="sb-link" href="https://www.oabsp.org.br/portal-da-transparencia" target="_blank"><span class="ico">📊</span> Transparência</a>
+    <a class="sb-link" href="https://marketplace.oabsp.org.br/" target="_blank"><span class="ico">🏪</span> Marketplace Lawtechs</a>
+  </div>
+
+  <div class="sb-contacts">
+    <strong style="color:var(--gold);display:block;margin-bottom:6px;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;">Contatos Confirmados</strong>
+    <p>
+      📞 <strong>(11) 3291-3777</strong><br>
+      Central de Relacionamento<br><br>
+      📍 <strong>Sede Seccional</strong><br>
+      R. Maria Paula, 35 – Centro – SP<br><br>
+      📍 <strong>Atendimento</strong><br>
+      Pça da Sé, 385 – Centro – SP<br><br>
+      📍 <strong>Ética e Prerrogativas</strong><br>
+      R. Maria Paula, 88 – Bela Vista – SP
+    </p>
+  </div>
+</aside>
+
+<!-- ══════════ MAIN ══════════ -->
+<div id="main">
+
+  <!-- TOPBAR -->
+  <div id="topbar">
+    <div class="search-wrap">
+      <span class="si">🔍</span>
+      <input type="text" id="q" placeholder="Buscar prompt, serviço ou palavra-chave…" oninput="runSearch()">
+    </div>
+    <div class="top-pills">
+      <span class="pill active" onclick="showCat('all',this)">Todos</span>
+      <span class="pill" onclick="showCat('restrita',this)">🔒 Restrita</span>
+      <span class="pill" onclick="showCat('certif',this)">🔐 Cert. Digital</span>
+      <span class="pill" onclick="showCat('financeiro',this)">💰 Financeiro</span>
+      <span class="pill" onclick="showCat('email',this)">✉️ E-mails</span>
+    </div>
+    <div class="top-stat">Exibindo <strong id="vis-count">0</strong> prompts</div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-row">
+      <div>
+        <h2>Biblioteca de Prompts<br><em>OAB São Paulo</em></h2>
+        <p>Todos os prompts e modelos de e-mail foram gerados exclusivamente a partir da página de Serviços do site oficial da OAB SP. Nenhuma informação foi inventada ou obtida de fontes externas.</p>
+        <span class="source-badge">✅ Fonte: oabsp.org.br/servicos — verificado em março/2026</span>
+      </div>
+      <div class="hero-badges">
+        <div class="h-badge"><div class="h-badge-num" id="total-num">0</div><div class="h-badge-lbl">Prompts</div></div>
+        <div class="h-badge"><div class="h-badge-num">34</div><div class="h-badge-lbl">Serviços</div></div>
+        <div class="h-badge"><div class="h-badge-num">9</div><div class="h-badge-lbl">Categorias</div></div>
+        <div class="h-badge"><div class="h-badge-num">947</div><div class="h-badge-lbl">Pontos Atend.</div></div>
+        <div class="h-badge"><div class="h-badge-num">690+</div><div class="h-badge-lbl">Salas Fóruns</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div id="content">
+
+    <!-- ── MAPA DE SERVIÇOS CONFIRMADOS ── -->
+    <div class="section-block" data-cat="all" id="blk-mapa">
+      <div class="sec-head">
+        <div class="sec-icon" style="background:rgba(212,160,23,0.1)">🗺</div>
+        <div class="sec-title">Mapa de Serviços Confirmados — oabsp.org.br/servicos</div>
+      </div>
+      <div class="info-box">
+        <strong>34 serviços listados na página oficial.</strong> Os chips abaixo representam todos os serviços identificados na página <em>oabsp.org.br/servicos</em>. Os links apontam para os URLs exatos encontrados no site. Todos os prompts desta biblioteca são baseados nesses serviços.
+      </div>
+      <div class="svc-map">
+        <a class="svc-chip" href="https://www.oabsp.org.br/p/aceleradora-de-escritorios" target="_blank"><span class="svc-chip-ico">🚀</span><div><div class="svc-chip-txt">Aceleradora de Escritórios</div><span class="svc-chip-url">oabsp.org.br/p/aceleradora...</span></div></a>
+        <a class="svc-chip" href="https://www2.oabsp.org.br/asp/dotnet/Index/Servicos/Advocacia?page=1" target="_blank"><span class="svc-chip-ico">📅</span><div><div class="svc-chip-txt">Agendamento Online</div><span class="svc-chip-url">www2.oabsp.org.br</span></div></a>
+        <a class="svc-chip" href="https://www.oabsp.org.br/comissao/advocacia-dativa" target="_blank"><span class="svc-chip-ico">⚖️</span><div><div class="svc-chip-txt">Advocacia Dativa</div><span class="svc-chip-url">oabsp.org.br/comissao/...</span></div></a>
+        <a class="svc-chip" href="https://www2.oabsp.org.br/asp/dotnet/LoginSite/LoginMain.aspx?op=9" target="_blank"><span class="svc-chip-ico">📋</span><div><div class="svc-chip-txt">Atualização Cadastral</div><span class="svc-chip-url">Área Restrita — op=9</span></div></a>
+        <a class="svc-chip" href="https://www.oabsp.org.br/servicos#modal" target="_blank"><span class="svc-chip-ico">📚</span><div><div class="svc-chip-txt">Biblioteca</div><span class="svc-chip-url">oabsp.org.br/servicos (modal)</span></div></a>
+        <a class="svc-chip" href="https://www.oabsp.org.br/upload/2154530293.xlsx" target="_blank"><span class="svc-chip-ico">📆</span><div><div class="svc-chip-txt">Calendário de Feriados</div><span class="svc-chip-url">Download XLSX direto</span></div></a>
+        <a class="svc-chip" href="https://www2.oabsp.org.br/asp/bolsa_profissionais/bolsa_profissionais01.asp" target="_blank"><span class="svc-chip-ico">👤</span><div><div class="svc-chip-txt">Central de Currículos</div><span class="svc-chip-url">www2.oabsp.org.br</span></div></a>
+        <a class="svc-chip" href="https://www2.oabsp.org.br/asp/dotnet/Index/Servicos/Advocacia?page=4" target="_blank"><span class="svc-chip-ico">📄</span><div><div class="svc-chip-txt">Certidões</div><span class="svc-chip-url">Advocacia page=4</span></div></a>
+        <a class="svc-chip" href="https://www.oabsp.org.br/servicos#modal" target="_blank"><span class="svc-chip-ico">🔐</span><div><div class="svc-chip-txt">Certificação Digital</div><span class="svc-chip-url">oabsp.org.br/servicos (modal)</span></div></a>
+        <a class="svc-chip" href="https://www2.oabsp.org.br/asp/dotnet/Index/Servicos/Advocacia?page=3" target="_blank"><span class="svc-chip-ico">🔎</span><div><div class="svc-chip-txt">Consulta de Documentos</div><span class="svc-chip-url">Advocacia page=3</span></div></a>
+        <a class="svc-chip" href="https://www2.oabsp.org.br/asp/consultaInscritos/consultaHome.asp" target="_blank"><span class="svc-chip-ico">🔍</span><div><div class="svc-chip-txt">Consulta de Inscritos</div><span class="svc-chip-url">www2.oabsp.org.br</span></div></a>
+        <a class="svc-chip" href="https://www.oabsp.org.br/p/cultural-oab-sp" target="_blank"><span class="svc-chip-ico">🎭</span><div><div class="svc-chip-txt">Cultural OAB SP</div><span class="svc-chip-url">oabsp.org.br/p/cultural-oab-sp</span></div></a>
+        <a class="svc-chip" href="https://www.oabsp.org.br/servicos#modal" target="_blank"><span class="svc-chip-ico">🪪</span><div><div class="svc-chip-txt">Doc. Identidade Profissional</div><span class="svc-chip-url">oabsp.org.br/servicos (modal)</span></div></a>
+        <a class="svc-chip" href="https://www.oabsp.org.br/duvidas-frequentes" target="_blank"><span class="svc-chip-ico">❓</span><div><div class="svc-chip-txt">Dúvidas Frequentes</div><span class="svc-chip-url">oabsp.org.br/duvidas-frequentes</span></div></a>
+        <a class="svc-chip" href="https://www2.oabsp.org.br/asp/dotnet/LoginSite/LoginMain.aspx?op=38" target="_blank"><span class="svc-chip-ico">💰</span><div><div class="svc-chip-txt">Financeiro</div><span class="svc-chip-url">Área Restrita — op=38</span></div></a>
+        <a class="svc-chip" href="https://www2.oabsp.org.br/asp/dotnet/Index/Servicos/Advocacia?page=2" target="_blank"><span class="svc-chip-ico">📝</span><div><div class="svc-chip-txt">Inscrições na OAB SP</div><span class="svc-chip-url">Advocacia page=2</span></div></a>
+        <a class="svc-chip" href="https://www.oabsp.org.br/servicos#modal" target="_blank"><span class="svc-chip-ico">🏛</span><div><div class="svc-chip-txt">INSS Digital</div><span class="svc-chip-url">oabsp.org.br/servicos (modal)</span></div></a>
+        <a class="svc-chip" href="https://www2.oabsp.org.br/asp/dotnet/LoginSite/LoginMain.aspx?op=1" target="_blank"><span class="svc-chip-ico">📬</span><div><div class="svc-chip-txt">Intimações</div><span class="svc-chip-url">Área Restrita — op=1</span></div></a>
+        <a class="svc-chip" href="https://marketplace.oabsp.org.br/" target="_blank"><span class="svc-chip-ico">🏪</span><div><div class="svc-chip-txt">Marketplace de Lawtechs</div><span class="svc-chip-url">marketplace.oabsp.org.br</span></div></a>
+        <a class="svc-chip" href="https://www2.oabsp.org.br/asp/clipping_jur/default.asp" target="_blank"><span class="svc-chip-ico">📰</span><div><div class="svc-chip-txt">Notícias Jurídicas</div><span class="svc-chip-url">www2.oabsp.org.br</span></div></a>
+        <a class="svc-chip" href="https://www2.oabsp.org.br/asp/dotnet/LoginSite/LoginMain.aspx?op=170" target="_blank"><span class="svc-chip-ico">🏢</span><div><div class="svc-chip-txt">Oficina de Advocacia</div><span class="svc-chip-url">Área Restrita — op=170</span></div></a>
+        <a class="svc-chip" href="https://www.oabsp.org.br/p/oficinas-eproc" target="_blank"><span class="svc-chip-ico">💻</span><div><div class="svc-chip-txt">Oficinas eproc</div><span class="svc-chip-url">oabsp.org.br/p/oficinas-eproc</span></div></a>
+        <a class="svc-chip" href="https://www2.oabsp.org.br/asp/ouvidoria/ouvidoria01.asp" target="_blank"><span class="svc-chip-ico">📣</span><div><div class="svc-chip-txt">Ouvidoria</div><span class="svc-chip-url">www2.oabsp.org.br</span></div></a>
+        <a class="svc-chip" href="https://www2.oabsp.org.br/asp/dotnet/LoginSite/AcessoRestrito/gateway.aspx?op=45" target="_blank"><span class="svc-chip-ico">⚡</span><div><div class="svc-chip-txt">Processo Eletrônico</div><span class="svc-chip-url">Área Restrita — op=45</span></div></a>
+        <a class="svc-chip" href="https://www.oabsp.org.br/p/promove-mulheres-advogadas" target="_blank"><span class="svc-chip-ico">👩‍⚖️</span><div><div class="svc-chip-txt">Promove Mulheres Advogadas</div><span class="svc-chip-url">oabsp.org.br/p/promove-...</span></div></a>
+        <a class="svc-chip" href="https://www.oabsp.org.br/servicos#modal" target="_blank"><span class="svc-chip-ico">🧪</span><div><div class="svc-chip-txt">Sandbox Regulatório</div><span class="svc-chip-url">oabsp.org.br/servicos (modal)</span></div></a>
+        <a class="svc-chip" href="https://www.oabsp.org.br/comissao/sociedades-de-advocacia" target="_blank"><span class="svc-chip-ico">🏢</span><div><div class="svc-chip-txt">Sociedades de Advocacia</div><span class="svc-chip-url">oabsp.org.br/comissao/...</span></div></a>
+        <a class="svc-chip" href="https://www.oabsp.org.br/servicos#modal" target="_blank"><span class="svc-chip-ico">⚖️</span><div><div class="svc-chip-txt">Tabela de Custas</div><span class="svc-chip-url">oabsp.org.br/servicos (modal)</span></div></a>
+        <a class="svc-chip" href="https://www.oabsp.org.br/servicos#modal" target="_blank"><span class="svc-chip-ico">💵</span><div><div class="svc-chip-txt">Tabela de Honorários</div><span class="svc-chip-url">oabsp.org.br/servicos (modal)</span></div></a>
+        <a class="svc-chip" href="https://www.oabsp.org.br/servicos#modal" target="_blank"><span class="svc-chip-ico">🚌</span><div><div class="svc-chip-txt">Transfer Fóruns</div><span class="svc-chip-url">oabsp.org.br/servicos (modal)</span></div></a>
+        <a class="svc-chip" href="https://www2.oabsp.org.br/asp/dotnet/LoginSite/LoginMain.aspx?op=33" target="_blank"><span class="svc-chip-ico">🔄</span><div><div class="svc-chip-txt">Transferência de Subseção</div><span class="svc-chip-url">Área Restrita — op=33</span></div></a>
+        <a class="svc-chip" href="https://www.oabsp.org.br/portal-da-transparencia" target="_blank"><span class="svc-chip-ico">📊</span><div><div class="svc-chip-txt">Transparência</div><span class="svc-chip-url">oabsp.org.br/portal-da-trans...</span></div></a>
+        <a class="svc-chip" href="https://www.oabsp.org.br/tribunal-de-etica-e-disciplina" target="_blank"><span class="svc-chip-ico">🏛</span><div><div class="svc-chip-txt">Tribunal de Ética — TED</div><span class="svc-chip-url">oabsp.org.br/tribunal-de-...</span></div></a>
+        <a class="svc-chip" href="https://www.oabsp.org.br/p/usinas-solares" target="_blank"><span class="svc-chip-ico">☀️</span><div><div class="svc-chip-txt">Usinas Solares</div><span class="svc-chip-url">oabsp.org.br/p/usinas-solares</span></div></a>
+      </div>
+    </div>
+
+    <!-- ── ENDEREÇOS CONFIRMADOS ── -->
+    <div class="section-block" data-cat="all institucional" id="blk-enderecos">
+      <div class="sec-head">
+        <div class="sec-icon" style="background:rgba(212,160,23,0.1)">📍</div>
+        <div class="sec-title">Endereços e Contatos — Confirmados no Site</div>
+      </div>
+      <div class="addr-grid">
+        <div class="addr-card">
+          <div class="addr-type">Central de Relacionamento</div>
+          <div class="addr-text">📞 <strong style="color:var(--gold-l)">(11) 3291-3777</strong></div>
+        </div>
+        <div class="addr-card">
+          <div class="addr-type">Sede Seccional</div>
+          <div class="addr-text">Rua Maria Paula, 35<br>Centro — São Paulo / SP</div>
+        </div>
+        <div class="addr-card">
+          <div class="addr-type">Atendimento ao Inscrito</div>
+          <div class="addr-text">Praça da Sé, 385<br>Centro — São Paulo / SP</div>
+        </div>
+        <div class="addr-card">
+          <div class="addr-type">Sede Administrativa / Correspondências</div>
+          <div class="addr-text">Praça da Sé, 385 — 4º andar<br>Sé — São Paulo / SP</div>
+          <div class="addr-cep">CEP: 01001-902</div>
+        </div>
+        <div class="addr-card">
+          <div class="addr-type">Sede de Ética e Prerrogativas</div>
+          <div class="addr-text">Rua Maria Paula, 88<br>Bela Vista — São Paulo / SP</div>
+          <div class="addr-cep">CEP: 01319-001</div>
+        </div>
+        <div class="addr-card">
+          <div class="addr-type">Email da Advocacia (Webmail)</div>
+          <div class="addr-text"><a href="https://webmail.oabsp.org.br" target="_blank" style="color:var(--gold-l)">webmail.oabsp.org.br</a></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ ÁREA RESTRITA ════ -->
+    <div class="section-block" data-cat="restrita" id="blk-restrita">
+      <div class="sec-head">
+        <div class="sec-icon" style="background:rgba(26,127,75,0.15)">🔒</div>
+        <div class="sec-title">Área Restrita — Serviços com Login</div>
+        <span class="sec-count">6 serviços</span>
+        <a class="sec-url" href="https://www2.oabsp.org.br/asp/dotnet/LoginSite/LoginMain.aspx" target="_blank">www2.oabsp.org.br › LoginSite</a>
+      </div>
+      <div class="info-box">
+        Os serviços abaixo exigem acesso à <strong>Área Restrita do site da OAB SP</strong>. Cada operação usa um parâmetro <code style="color:var(--gold-l)">op=</code> específico, conforme identificado na página oficial.
+      </div>
+      <div class="cards-grid">
+
+        <div class="p-card" data-cat="restrita" data-txt="Como acessar o serviço de Atualização Cadastral na área restrita do site da OAB SP? O link direto é o parâmetro op=9 no sistema www2.oabsp.org.br.">
+          <div class="p-card-head"><div><span class="p-tag t-restrita">🔒 Área Restrita · op=9</span><div class="p-title">Atualização Cadastral</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como acessar o serviço de <span class="hl">Atualização Cadastral</span> na área restrita do site da <span class="hl2">OAB SP</span>? O acesso é feito via parâmetro <span class="hl3">op=9</span> em www2.oabsp.org.br.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www2.oabsp.org.br/asp/dotnet/LoginSite/LoginMain.aspx?op=9" target="_blank">www2.oabsp.org.br › op=9</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="restrita" data-txt="Como acessar a área financeira na área restrita do site da OAB SP? O acesso é feito via parâmetro op=38 em www2.oabsp.org.br.">
+          <div class="p-card-head"><div><span class="p-tag t-restrita">🔒 Área Restrita · op=38</span><div class="p-title">Financeiro</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como acessar a área <span class="hl">Financeiro</span> na área restrita do site da <span class="hl2">OAB SP</span>? O acesso é feito via parâmetro <span class="hl3">op=38</span> em www2.oabsp.org.br.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www2.oabsp.org.br/asp/dotnet/LoginSite/LoginMain.aspx?op=38" target="_blank">www2.oabsp.org.br › op=38</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="restrita" data-txt="Como acessar o serviço de Intimações (Recorte Digital) na área restrita do site da OAB SP? Para consultar intimações é necessário fazer cadastro na área restrita para ter acesso ao Recorte Digital. O parâmetro de acesso é op=1.">
+          <div class="p-card-head"><div><span class="p-tag t-restrita">🔒 Área Restrita · op=1</span><div class="p-title">Intimações — Recorte Digital</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como acessar o serviço de <span class="hl">Intimações</span> na área restrita? Para consultar intimações é necessário fazer cadastro na área restrita para ter acesso ao <span class="hl2">Recorte Digital</span>. Parâmetro: <span class="hl3">op=1</span>.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www2.oabsp.org.br/asp/dotnet/LoginSite/LoginMain.aspx?op=1" target="_blank">www2.oabsp.org.br › op=1</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="restrita" data-txt="Como acessar o serviço de Processo Eletrônico na área restrita do site da OAB SP? O sistema disponibiliza computadores com software de peticionamento eletrônico e apoio no uso dos sistemas eletrônicos da Justiça (e-SAJ e PJe). O parâmetro de acesso direto é op=45.">
+          <div class="p-card-head"><div><span class="p-tag t-restrita">🔒 Área Restrita · op=45</span><div class="p-title">Processo Eletrônico — e-SAJ e PJe</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como acessar o serviço de <span class="hl">Processo Eletrônico</span> na área restrita da OAB SP? O site oferece apoio nos sistemas <span class="hl2">e-SAJ e PJe</span> e computadores com software de peticionamento. Parâmetro: <span class="hl3">op=45</span>.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www2.oabsp.org.br/asp/dotnet/LoginSite/AcessoRestrito/gateway.aspx?op=45" target="_blank">www2.oabsp.org.br › op=45</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="restrita" data-txt="Como acessar o serviço Oficina de Advocacia na área restrita do site da OAB SP? O parâmetro de acesso direto é op=170 em www2.oabsp.org.br.">
+          <div class="p-card-head"><div><span class="p-tag t-restrita">🔒 Área Restrita · op=170</span><div class="p-title">Oficina de Advocacia</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como acessar o serviço <span class="hl">Oficina de Advocacia</span> na área restrita do site da OAB SP? Parâmetro de acesso direto: <span class="hl3">op=170</span> em www2.oabsp.org.br.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www2.oabsp.org.br/asp/dotnet/LoginSite/LoginMain.aspx?op=170" target="_blank">www2.oabsp.org.br › op=170</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="restrita" data-txt="Como acessar o serviço de Transferência de Subseção na área restrita do site da OAB SP? O parâmetro de acesso direto é op=33 em www2.oabsp.org.br.">
+          <div class="p-card-head"><div><span class="p-tag t-restrita">🔒 Área Restrita · op=33</span><div class="p-title">Transferência de Subseção</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como acessar o serviço de <span class="hl">Transferência de Subseção</span> na área restrita do site da OAB SP? Parâmetro: <span class="hl3">op=33</span> em www2.oabsp.org.br.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www2.oabsp.org.br/asp/dotnet/LoginSite/LoginMain.aspx?op=33" target="_blank">www2.oabsp.org.br › op=33</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ════ INSCRIÇÃO & DOCUMENTOS ════ -->
+    <div class="section-block" data-cat="inscricao" id="blk-inscricao">
+      <div class="sec-head">
+        <div class="sec-icon" style="background:rgba(74,26,122,0.2)">📝</div>
+        <div class="sec-title">Inscrição & Documentos</div>
+        <span class="sec-count">5 serviços</span>
+        <a class="sec-url" href="https://www2.oabsp.org.br/asp/dotnet/Index/Servicos/Advocacia" target="_blank">www2.oabsp.org.br › Advocacia</a>
+      </div>
+      <div class="cards-grid">
+
+        <div class="p-card" data-cat="inscricao" data-txt="Como solicitar inscrição na OAB SP pelo site? O serviço de Inscrições na OAB SP está disponível em www2.oabsp.org.br/asp/dotnet/Index/Servicos/Advocacia?page=2.">
+          <div class="p-card-head"><div><span class="p-tag t-inscricao">📝 Inscrição · page=2</span><div class="p-title">Inscrições na OAB SP</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como solicitar <span class="hl">inscrição na OAB SP</span> pelo site? O serviço está em www2.oabsp.org.br na seção Advocacia, <span class="hl3">page=2</span>.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www2.oabsp.org.br/asp/dotnet/Index/Servicos/Advocacia?page=2" target="_blank">www2.oabsp.org.br › page=2</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="inscricao" data-txt="Como solicitar certidões na OAB SP pelo site? O serviço de Certidões está disponível em www2.oabsp.org.br/asp/dotnet/Index/Servicos/Advocacia?page=4. Todos os processos da Ordem estão digitalizados.">
+          <div class="p-card-head"><div><span class="p-tag t-inscricao">📄 Certidões · page=4</span><div class="p-title">Certidões</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como solicitar <span class="hl">certidões</span> na OAB SP? O serviço está em www2.oabsp.org.br, seção Advocacia, <span class="hl3">page=4</span>. Todos os processos da Ordem estão <span class="hl2">digitalizados</span>.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www2.oabsp.org.br/asp/dotnet/Index/Servicos/Advocacia?page=4" target="_blank">www2.oabsp.org.br › page=4</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="inscricao" data-txt="Como consultar documentos na OAB SP pelo site? O serviço de Consulta de Documentos está disponível em www2.oabsp.org.br/asp/dotnet/Index/Servicos/Advocacia?page=3.">
+          <div class="p-card-head"><div><span class="p-tag t-inscricao">🔎 Documentos · page=3</span><div class="p-title">Consulta de Documentos</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como acessar o serviço de <span class="hl">Consulta de Documentos</span> na OAB SP? Disponível em www2.oabsp.org.br, seção Advocacia, <span class="hl3">page=3</span>.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www2.oabsp.org.br/asp/dotnet/Index/Servicos/Advocacia?page=3" target="_blank">www2.oabsp.org.br › page=3</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="inscricao" data-txt="Como verificar se um advogado está inscrito na OAB SP? A Consulta de Inscritos está disponível em www2.oabsp.org.br/asp/consultaInscritos/consultaHome.asp, de acesso público.">
+          <div class="p-card-head"><div><span class="p-tag t-inscricao">🔍 Consulta Pública</span><div class="p-title">Consulta de Inscritos</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como verificar se um advogado está inscrito na OAB SP? A <span class="hl">Consulta de Inscritos</span> é pública e está em <span class="hl3">www2.oabsp.org.br/asp/consultaInscritos</span>.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www2.oabsp.org.br/asp/consultaInscritos/consultaHome.asp" target="_blank">www2.oabsp.org.br › consultaInscritos</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="inscricao" data-txt="Como solicitar o Documento de Identidade Profissional da OAB SP pelo site? O serviço está disponível via modal na página oabsp.org.br/servicos, no item Documento de Identidade Profissional.">
+          <div class="p-card-head"><div><span class="p-tag t-inscricao">🪪 Identidade Profissional</span><div class="p-title">Documento de Identidade Profissional</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como solicitar o <span class="hl">Documento de Identidade Profissional</span> da OAB SP? O serviço está disponível via modal em <span class="hl3">oabsp.org.br/servicos</span>.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www.oabsp.org.br/servicos" target="_blank">oabsp.org.br/servicos (modal)</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="inscricao" data-txt="Como acessar a página de Agendamento Online da OAB SP para solicitar atendimento? O serviço está disponível em www2.oabsp.org.br/asp/dotnet/Index/Servicos/Advocacia?page=1. A OAB SP conta com 947 pontos de atendimento por todo o estado.">
+          <div class="p-card-head"><div><span class="p-tag t-inscricao">📅 Agendamento · page=1</span><div class="p-title">Agendamento Online</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como acessar o <span class="hl">Agendamento Online</span> da OAB SP? Disponível em www2.oabsp.org.br, page=1. A OAB SP conta com <span class="hl2">947 pontos de atendimento</span> por todo o estado.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www2.oabsp.org.br/asp/dotnet/Index/Servicos/Advocacia?page=1" target="_blank">www2.oabsp.org.br › page=1</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ════ CERTIFICAÇÃO DIGITAL ════ -->
+    <div class="section-block" data-cat="certif" id="blk-certif">
+      <div class="sec-head">
+        <div class="sec-icon" style="background:rgba(26,74,138,0.2)">🔐</div>
+        <div class="sec-title">Certificação Digital — AC OAB</div>
+        <span class="sec-count">4 prompts</span>
+        <a class="sec-url" href="https://www.oabsp.org.br/servicos" target="_blank">oabsp.org.br/servicos (modal)</a>
+      </div>
+      <div class="info-box">
+        O serviço de <strong>Certificação Digital</strong> é apresentado via modal na página <strong>oabsp.org.br/servicos</strong>. Não há subpágina dedicada acessível neste momento — o único conteúdo confirmado é a existência do serviço como item na lista oficial.
+      </div>
+      <div class="cards-grid">
+
+        <div class="p-card" data-cat="certif" data-txt="Como acessar informações sobre Certificação Digital no site da OAB SP? O serviço está listado na página oabsp.org.br/servicos e é acessado via modal. Onde encontro mais detalhes sobre a Certificação Digital da OAB SP?">
+          <div class="p-card-head"><div><span class="p-tag t-certif">🔐 Cert. Digital — modal</span><div class="p-title">Acessar informações de Certificação Digital</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como acessar informações sobre <span class="hl">Certificação Digital</span> no site da OAB SP? O serviço está listado em <span class="hl3">oabsp.org.br/servicos</span> e é acessado via modal.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www.oabsp.org.br/servicos" target="_blank">oabsp.org.br/servicos</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="certif" data-txt="A OAB SP disponibiliza o serviço de Certificação Digital listado em oabsp.org.br/servicos. Como solicitar suporte ou informações sobre esse serviço? O contato é pela Central de Relacionamento (11) 3291-3777 ou pelo Fale Conosco do site.">
+          <div class="p-card-head"><div><span class="p-tag t-certif">🔐 Cert. Digital — suporte</span><div class="p-title">Suporte à Certificação Digital</div></div></div>
+          <div class="p-body"><div class="p-prompt">A OAB SP disponibiliza <span class="hl">Certificação Digital</span> listada em oabsp.org.br/servicos. Para suporte, o contato é pela <span class="hl2">Central (11) 3291-3777</span> ou pelo Fale Conosco do site.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www2.oabsp.org.br/asp/fale_conosco/fale_conosco01.asp" target="_blank">www2.oabsp.org.br › fale_conosco</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="certif" data-txt="Como consultar a página de Dúvidas Frequentes da OAB SP sobre Certificação Digital? A página de Dúvidas Frequentes está em oabsp.org.br/duvidas-frequentes e é listada como serviço oficial.">
+          <div class="p-card-head"><div><span class="p-tag t-certif">🔐 Dúvidas — Cert. Digital</span><div class="p-title">Dúvidas Frequentes — Certificação Digital</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como consultar as <span class="hl">Dúvidas Frequentes</span> da OAB SP sobre <span class="hl2">Certificação Digital</span>? A página oficial de dúvidas está em <span class="hl3">oabsp.org.br/duvidas-frequentes</span>.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www.oabsp.org.br/duvidas-frequentes" target="_blank">oabsp.org.br/duvidas-frequentes</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="certif" data-txt="O serviço de INSS Digital está listado na página oabsp.org.br/servicos da OAB SP. Como acessar informações sobre o INSS Digital disponível para advogados?">
+          <div class="p-card-head"><div><span class="p-tag t-certif">🏛 INSS Digital — modal</span><div class="p-title">INSS Digital</div></div></div>
+          <div class="p-body"><div class="p-prompt">O serviço de <span class="hl">INSS Digital</span> está listado em <span class="hl3">oabsp.org.br/servicos</span>. Como acessar informações sobre o INSS Digital disponível para advogados inscritos na OAB SP?</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www.oabsp.org.br/servicos" target="_blank">oabsp.org.br/servicos (modal)</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ════ FINANCEIRO ════ -->
+    <div class="section-block" data-cat="financeiro" id="blk-financeiro">
+      <div class="sec-head">
+        <div class="sec-icon" style="background:rgba(212,160,23,0.12)">💰</div>
+        <div class="sec-title">Financeiro — Anuidade & Transparência</div>
+        <span class="sec-count">4 prompts</span>
+        <a class="sec-url" href="https://www.oabsp.org.br/portal-da-transparencia" target="_blank">oabsp.org.br/portal-da-transparencia</a>
+      </div>
+      <div class="cards-grid">
+
+        <div class="p-card" data-cat="financeiro" data-txt="Como acessar a área Financeiro da OAB SP para consultar situação de anuidade? O serviço está na área restrita via parâmetro op=38 em www2.oabsp.org.br. O site também disponibiliza o programa Anuidade de Volta.">
+          <div class="p-card-head"><div><span class="p-tag t-financeiro">💰 Financeiro · op=38</span><div class="p-title">Financeiro — Anuidade de Volta</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como acessar a área <span class="hl">Financeiro</span> da OAB SP? Acesse via <span class="hl3">op=38</span> na área restrita. O site também disponibiliza o programa <span class="hl2">Anuidade de Volta</span>.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www2.oabsp.org.br/asp/dotnet/LoginSite/LoginMain.aspx?op=38" target="_blank">www2.oabsp.org.br › op=38</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="financeiro" data-txt="Como acessar o Portal da Transparência da OAB SP? O portal está em oabsp.org.br/portal-da-transparencia e é listado como serviço oficial no site.">
+          <div class="p-card-head"><div><span class="p-tag t-financeiro">📊 Transparência</span><div class="p-title">Portal da Transparência</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como acessar o <span class="hl">Portal da Transparência</span> da OAB SP? Disponível em <span class="hl3">oabsp.org.br/portal-da-transparencia</span>, listado como serviço oficial.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www.oabsp.org.br/portal-da-transparencia" target="_blank">oabsp.org.br/portal-da-transparencia</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="financeiro" data-txt="Como consultar a Tabela de Honorários da OAB SP? O serviço está listado na página oabsp.org.br/servicos e é acessado via modal. Como encontro a Tabela de Honorários no site oficial?">
+          <div class="p-card-head"><div><span class="p-tag t-financeiro">💵 Honorários — modal</span><div class="p-title">Tabela de Honorários</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como consultar a <span class="hl">Tabela de Honorários</span> da OAB SP? O serviço está listado em <span class="hl3">oabsp.org.br/servicos</span> e é acessado via modal na mesma página.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www.oabsp.org.br/servicos" target="_blank">oabsp.org.br/servicos (modal)</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="financeiro" data-txt="Como consultar a Tabela de Custas da OAB SP? O serviço está listado em oabsp.org.br/servicos e é acessado via modal. Como encontro a Tabela de Custas atualizada no site?">
+          <div class="p-card-head"><div><span class="p-tag t-financeiro">⚖️ Custas — modal</span><div class="p-title">Tabela de Custas</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como consultar a <span class="hl">Tabela de Custas</span> da OAB SP? Listada em <span class="hl3">oabsp.org.br/servicos</span> e acessada via modal na mesma página.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www.oabsp.org.br/servicos" target="_blank">oabsp.org.br/servicos (modal)</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="financeiro" data-txt="O site da OAB SP disponibiliza o OAB Shop listado na página de serviços. Como acessar o OAB Shop para advogados inscritos?">
+          <div class="p-card-head"><div><span class="p-tag t-financeiro">🛒 OAB Shop</span><div class="p-title">OAB Shop</div></div></div>
+          <div class="p-body"><div class="p-prompt">O site da OAB SP disponibiliza o <span class="hl">OAB Shop</span> mencionado na página de serviços. Como acessar o OAB Shop para advogados inscritos na OAB SP?</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www.oabsp.org.br/servicos" target="_blank">oabsp.org.br/servicos</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ════ SERVIÇOS & PROGRAMAS ════ -->
+    <div class="section-block" data-cat="servicos" id="blk-servicos">
+      <div class="sec-head">
+        <div class="sec-icon" style="background:rgba(14,106,106,0.2)">🛠</div>
+        <div class="sec-title">Serviços & Programas</div>
+        <span class="sec-count">12 serviços</span>
+      </div>
+      <div class="cards-grid">
+
+        <div class="p-card" data-cat="servicos" data-txt="O que é o programa Aceleradora de Escritórios da OAB SP e como acessar? O programa está em oabsp.org.br/p/aceleradora-de-escritorios, listado como serviço oficial no site.">
+          <div class="p-card-head"><div><span class="p-tag t-servicos">🚀 Serviços</span><div class="p-title">Aceleradora de Escritórios</div></div></div>
+          <div class="p-body"><div class="p-prompt">O que é o programa <span class="hl">Aceleradora de Escritórios</span> da OAB SP e como acessar? Disponível em <span class="hl3">oabsp.org.br/p/aceleradora-de-escritorios</span>.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www.oabsp.org.br/p/aceleradora-de-escritorios" target="_blank">oabsp.org.br/p/aceleradora-de-escritorios</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="servicos" data-txt="Como acessar informações sobre Advocacia Dativa na OAB SP? O serviço está em oabsp.org.br/comissao/advocacia-dativa e é listado oficialmente na página de serviços.">
+          <div class="p-card-head"><div><span class="p-tag t-servicos">⚖️ Serviços</span><div class="p-title">Advocacia Dativa</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como acessar informações sobre <span class="hl">Advocacia Dativa</span> na OAB SP? Disponível em <span class="hl3">oabsp.org.br/comissao/advocacia-dativa</span>.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www.oabsp.org.br/comissao/advocacia-dativa" target="_blank">oabsp.org.br/comissao/advocacia-dativa</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="servicos" data-txt="Como cadastrar currículo na Central de Currículos da OAB SP? O serviço está em www2.oabsp.org.br/asp/bolsa_profissionais/bolsa_profissionais01.asp.">
+          <div class="p-card-head"><div><span class="p-tag t-servicos">👤 Serviços</span><div class="p-title">Central de Currículos</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como cadastrar currículo na <span class="hl">Central de Currículos</span> da OAB SP? O serviço está em <span class="hl3">www2.oabsp.org.br/asp/bolsa_profissionais</span>.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www2.oabsp.org.br/asp/bolsa_profissionais/bolsa_profissionais01.asp" target="_blank">www2.oabsp.org.br › bolsa_profissionais</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="servicos" data-txt="Como acessar a Biblioteca da OAB SP no site? O serviço de Biblioteca está listado em oabsp.org.br/servicos e é acessado via modal na página.">
+          <div class="p-card-head"><div><span class="p-tag t-servicos">📚 Serviços</span><div class="p-title">Biblioteca</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como acessar a <span class="hl">Biblioteca</span> da OAB SP no site? O serviço está listado em <span class="hl3">oabsp.org.br/servicos</span> e é acessado via modal.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www.oabsp.org.br/servicos" target="_blank">oabsp.org.br/servicos (modal)</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="servicos" data-txt="Como baixar o Calendário de Feriados da OAB SP? O calendário está disponível para download direto em formato XLSX no endereço oabsp.org.br/upload/2154530293.xlsx.">
+          <div class="p-card-head"><div><span class="p-tag t-servicos">📆 Serviços</span><div class="p-title">Calendário de Feriados</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como baixar o <span class="hl">Calendário de Feriados</span> da OAB SP? Download direto em formato <span class="hl2">XLSX</span> em <span class="hl3">oabsp.org.br/upload/2154530293.xlsx</span>.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www.oabsp.org.br/upload/2154530293.xlsx" target="_blank">oabsp.org.br/upload/2154530293.xlsx</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="servicos" data-txt="O que é o Marketplace de Lawtechs da OAB SP? O Marketplace de Lawtechs oferece soluções em tecnologia e está disponível em marketplace.oabsp.org.br, mencionado na página de serviços.">
+          <div class="p-card-head"><div><span class="p-tag t-servicos">🏪 Serviços</span><div class="p-title">Marketplace de Lawtechs</div></div></div>
+          <div class="p-body"><div class="p-prompt">O que é o <span class="hl">Marketplace de Lawtechs</span> da OAB SP? Oferece soluções em tecnologia e está disponível em <span class="hl3">marketplace.oabsp.org.br</span>.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://marketplace.oabsp.org.br/" target="_blank">marketplace.oabsp.org.br</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="servicos" data-txt="Como acessar Notícias Jurídicas (clipping) no site da OAB SP? O serviço está em www2.oabsp.org.br/asp/clipping_jur/default.asp.">
+          <div class="p-card-head"><div><span class="p-tag t-servicos">📰 Serviços</span><div class="p-title">Notícias Jurídicas (Clipping)</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como acessar <span class="hl">Notícias Jurídicas</span> (clipping) no site da OAB SP? Disponível em <span class="hl3">www2.oabsp.org.br/asp/clipping_jur</span>.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www2.oabsp.org.br/asp/clipping_jur/default.asp" target="_blank">www2.oabsp.org.br › clipping_jur</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="servicos" data-txt="Como acessar as Oficinas eproc da OAB SP? O serviço está em oabsp.org.br/p/oficinas-eproc, com apoio no uso dos sistemas eletrônicos da Justiça (e-SAJ e PJe).">
+          <div class="p-card-head"><div><span class="p-tag t-servicos">💻 Serviços</span><div class="p-title">Oficinas eproc — e-SAJ e PJe</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como acessar as <span class="hl">Oficinas eproc</span> da OAB SP? Disponível em <span class="hl3">oabsp.org.br/p/oficinas-eproc</span>. Inclui apoio nos sistemas <span class="hl2">e-SAJ e PJe</span>.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www.oabsp.org.br/p/oficinas-eproc" target="_blank">oabsp.org.br/p/oficinas-eproc</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="servicos" data-txt="Como acessar o programa Promove Mulheres Advogadas da OAB SP? O programa está em oabsp.org.br/p/promove-mulheres-advogadas, listado como serviço oficial.">
+          <div class="p-card-head"><div><span class="p-tag t-servicos">👩‍⚖️ Serviços</span><div class="p-title">Promove Mulheres Advogadas</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como acessar o programa <span class="hl">Promove Mulheres Advogadas</span> da OAB SP? Disponível em <span class="hl3">oabsp.org.br/p/promove-mulheres-advogadas</span>.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www.oabsp.org.br/p/promove-mulheres-advogadas" target="_blank">oabsp.org.br/p/promove-mulheres-advogadas</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="servicos" data-txt="O que é o Sandbox Regulatório da OAB SP? Segundo a página de serviços oabsp.org.br/servicos, o Sandbox Regulatório testa projetos de inovação em um ambiente controlado.">
+          <div class="p-card-head"><div><span class="p-tag t-servicos">🧪 Serviços</span><div class="p-title">Sandbox Regulatório</div></div></div>
+          <div class="p-body"><div class="p-prompt">O que é o <span class="hl">Sandbox Regulatório</span> da OAB SP? Segundo <span class="hl3">oabsp.org.br/servicos</span>, testa <span class="hl2">projetos de inovação em um ambiente controlado</span>.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www.oabsp.org.br/servicos" target="_blank">oabsp.org.br/servicos (modal)</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="servicos" data-txt="Como informar sobre o serviço Transfer Fóruns da OAB SP? O serviço está listado em oabsp.org.br/servicos e é acessado via modal. As sedes da OAB SP contam com mais de 690 salas da advocacia em fóruns e tribunais com espaços de atendimento a clientes e copiadoras.">
+          <div class="p-card-head"><div><span class="p-tag t-servicos">🚌 Serviços</span><div class="p-title">Transfer Fóruns — 690+ salas</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como acessar o serviço <span class="hl">Transfer Fóruns</span> da OAB SP? Listado em <span class="hl3">oabsp.org.br/servicos</span>. A OAB SP conta com <span class="hl2">mais de 690 salas da advocacia em fóruns e tribunais</span> com atendimento e copiadoras.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www.oabsp.org.br/servicos" target="_blank">oabsp.org.br/servicos (modal)</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="servicos" data-txt="Como acessar informações sobre Usinas Solares da OAB SP? O serviço está em oabsp.org.br/p/usinas-solares, listado oficialmente na página de serviços.">
+          <div class="p-card-head"><div><span class="p-tag t-servicos">☀️ Serviços</span><div class="p-title">Usinas Solares</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como acessar informações sobre <span class="hl">Usinas Solares</span> da OAB SP? Disponível em <span class="hl3">oabsp.org.br/p/usinas-solares</span>.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www.oabsp.org.br/p/usinas-solares" target="_blank">oabsp.org.br/p/usinas-solares</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="servicos" data-txt="A OAB SP oferece 947 pontos de atendimento por todo o estado com salas de coworking, wi-fi gratuito, salas de reunião e computadores com software de peticionamento eletrônico. Como localizar o ponto de atendimento mais próximo?">
+          <div class="p-card-head"><div><span class="p-tag t-servicos">📍 Infraestrutura</span><div class="p-title">947 pontos de atendimento no estado</div></div></div>
+          <div class="p-body"><div class="p-prompt">A OAB SP oferece <span class="hl">947 pontos de atendimento</span> com <span class="hl2">salas de coworking, wi-fi gratuito, salas de reunião</span> e computadores com peticionamento eletrônico. Como localizar o mais próximo?</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www.oabsp.org.br/subsecoes" target="_blank">oabsp.org.br/subsecoes</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="servicos" data-txt="Como acessar informações sobre Sociedades de Advocacia na OAB SP? O serviço está em oabsp.org.br/comissao/sociedades-de-advocacia e está listado na página de serviços. Todos os processos da Ordem estão digitalizados.">
+          <div class="p-card-head"><div><span class="p-tag t-servicos">🏢 Serviços</span><div class="p-title">Sociedades de Advocacia</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como acessar informações sobre <span class="hl">Sociedades de Advocacia</span> na OAB SP? Disponível em <span class="hl3">oabsp.org.br/comissao/sociedades-de-advocacia</span>. Todos os processos estão <span class="hl2">digitalizados</span>.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www.oabsp.org.br/comissao/sociedades-de-advocacia" target="_blank">oabsp.org.br/comissao/sociedades-de-advocacia</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ════ ÉTICA & PRERROGATIVAS ════ -->
+    <div class="section-block" data-cat="etica" id="blk-etica">
+      <div class="sec-head">
+        <div class="sec-icon" style="background:rgba(139,28,28,0.2)">⚖️</div>
+        <div class="sec-title">Ética, Prerrogativas & Ouvidoria</div>
+        <span class="sec-count">5 serviços</span>
+        <a class="sec-url" href="https://www.oabsp.org.br/tribunal-de-etica-e-disciplina" target="_blank">oabsp.org.br/tribunal-de-etica</a>
+      </div>
+      <div class="info-box">
+        Segundo a página confirmada, <strong>todos os processos da Ordem — do pedido de inscrição às demandas no Tribunal de Ética e Disciplina e na Comissão de Direito e Prerrogativas — estão digitalizados.</strong>
+      </div>
+      <div class="cards-grid">
+
+        <div class="p-card" data-cat="etica" data-txt="Como acessar o Tribunal de Ética e Disciplina (TED) da OAB SP? O TED está em oabsp.org.br/tribunal-de-etica-e-disciplina. Todos os processos do TED estão digitalizados conforme informado na página oficial de serviços.">
+          <div class="p-card-head"><div><span class="p-tag t-etica">⚖️ TED</span><div class="p-title">Tribunal de Ética e Disciplina (TED)</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como acessar o <span class="hl">Tribunal de Ética e Disciplina — TED</span> da OAB SP? Disponível em <span class="hl3">oabsp.org.br/tribunal-de-etica-e-disciplina</span>. Todos os processos estão digitalizados.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www.oabsp.org.br/tribunal-de-etica-e-disciplina" target="_blank">oabsp.org.br/tribunal-de-etica-e-disciplina</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="etica" data-txt="Como acessar a Comissão de Direitos e Prerrogativas da OAB SP? O serviço está em oabsp.org.br/comissao/direitos-e-prerrogativas, listado no menu de serviços e todos os processos estão digitalizados.">
+          <div class="p-card-head"><div><span class="p-tag t-etica">🛡 Prerrogativas</span><div class="p-title">Direitos e Prerrogativas</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como acessar a <span class="hl">Comissão de Direitos e Prerrogativas</span> da OAB SP? Disponível em <span class="hl3">oabsp.org.br/comissao/direitos-e-prerrogativas</span>.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www.oabsp.org.br/comissao/direitos-e-prerrogativas" target="_blank">oabsp.org.br/comissao/direitos-e-prerrogativas</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="etica" data-txt="Como acessar a Ouvidoria da OAB SP? A Ouvidoria está em www2.oabsp.org.br/asp/ouvidoria/ouvidoria01.asp e é listada como serviço oficial. Para atendimento também é possível ligar para (11) 3291-3777.">
+          <div class="p-card-head"><div><span class="p-tag t-etica">📣 Ouvidoria</span><div class="p-title">Ouvidoria</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como acessar a <span class="hl">Ouvidoria</span> da OAB SP? Disponível em <span class="hl3">www2.oabsp.org.br/asp/ouvidoria</span>. Atendimento também via <span class="hl2">(11) 3291-3777</span>.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www2.oabsp.org.br/asp/ouvidoria/ouvidoria01.asp" target="_blank">www2.oabsp.org.br › ouvidoria</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="etica" data-txt="Como acessar as Câmaras Recursais da OAB SP? O serviço está em oabsp.org.br/camaras-recursais, listado no menu de Serviços e Informações do site oficial.">
+          <div class="p-card-head"><div><span class="p-tag t-etica">🏛 Câmaras</span><div class="p-title">Câmaras Recursais</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como acessar as <span class="hl">Câmaras Recursais</span> da OAB SP? Disponível em <span class="hl3">oabsp.org.br/camaras-recursais</span>, listado no menu oficial do site.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www.oabsp.org.br/camaras-recursais" target="_blank">oabsp.org.br/camaras-recursais</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="etica" data-txt="Como acessar a Comissão do Quinto Constitucional da OAB SP? O serviço está em oabsp.org.br/comissao/quinto-constitucional, listado no menu oficial do site.">
+          <div class="p-card-head"><div><span class="p-tag t-etica">🏛 Quinto</span><div class="p-title">Quinto Constitucional</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como acessar a <span class="hl">Comissão do Quinto Constitucional</span> da OAB SP? Disponível em <span class="hl3">oabsp.org.br/comissao/quinto-constitucional</span>.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www.oabsp.org.br/comissao/quinto-constitucional" target="_blank">oabsp.org.br/comissao/quinto-constitucional</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ════ UNIVERSO OAB SP ════ -->
+    <div class="section-block" data-cat="universo" id="blk-universo">
+      <div class="sec-head">
+        <div class="sec-icon" style="background:rgba(122,58,0,0.2)">🌐</div>
+        <div class="sec-title">Universo OAB SP — Entidades Vinculadas</div>
+        <span class="sec-count">4 entidades</span>
+      </div>
+      <div class="info-box">
+        As entidades abaixo fazem parte do <strong>Universo OAB SP</strong>, conforme menu oficial do site <strong>oabsp.org.br</strong>.
+      </div>
+      <div class="cards-grid">
+
+        <div class="p-card" data-cat="universo" data-txt="O que é a CAASP e qual a relação com a OAB SP? A CAASP faz parte do Universo OAB SP, conforme menu oficial do site. Acesso em caasp.org.br.">
+          <div class="p-card-head"><div><span class="p-tag t-universo">🌐 Universo OAB SP</span><div class="p-title">CAASP</div></div></div>
+          <div class="p-body"><div class="p-prompt">O que é a <span class="hl">CAASP</span> e qual a relação com a OAB SP? Faz parte do <span class="hl2">Universo OAB SP</span> conforme menu oficial. Acesso: <span class="hl3">caasp.org.br</span>.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www.caasp.org.br/" target="_blank">caasp.org.br</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="universo" data-txt="O que é a ESA e qual a relação com a OAB SP? A ESA (Escola Superior de Advocacia) faz parte do Universo OAB SP conforme menu oficial do site oabsp.org.br. Acesso em esaoabsp.edu.br.">
+          <div class="p-card-head"><div><span class="p-tag t-universo">🌐 Universo OAB SP</span><div class="p-title">ESA — Escola Superior de Advocacia</div></div></div>
+          <div class="p-body"><div class="p-prompt">O que é a <span class="hl">ESA</span> e qual a relação com a OAB SP? A Escola Superior de Advocacia faz parte do <span class="hl2">Universo OAB SP</span>. Acesso: <span class="hl3">esaoabsp.edu.br</span>.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www.esaoabsp.edu.br/" target="_blank">esaoabsp.edu.br</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="universo" data-txt="O que é o OABPrev e qual a relação com a OAB SP? O OABPrev faz parte do Universo OAB SP conforme menu oficial. Acesso em oabprev-sp.org.br.">
+          <div class="p-card-head"><div><span class="p-tag t-universo">🌐 Universo OAB SP</span><div class="p-title">OABPrev</div></div></div>
+          <div class="p-body"><div class="p-prompt">O que é o <span class="hl">OABPrev</span> e qual a relação com a OAB SP? Faz parte do <span class="hl2">Universo OAB SP</span> conforme menu oficial. Acesso: <span class="hl3">oabprev-sp.org.br</span>.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www.oabprev-sp.org.br/" target="_blank">oabprev-sp.org.br</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="universo" data-txt="Como acessar o Exame de Ordem pelo site da OAB SP? O link Exame de Ordem está no menu do site oabsp.org.br e direciona para examedeordem.oab.org.br.">
+          <div class="p-card-head"><div><span class="p-tag t-universo">📋 Exame</span><div class="p-title">Exame de Ordem</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como acessar o <span class="hl">Exame de Ordem</span> pelo site da OAB SP? O link no menu direciona para <span class="hl3">examedeordem.oab.org.br</span>.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://examedeordem.oab.org.br/" target="_blank">examedeordem.oab.org.br</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ════ INSTITUCIONAL ════ -->
+    <div class="section-block" data-cat="institucional" id="blk-institucional">
+      <div class="sec-head">
+        <div class="sec-icon" style="background:rgba(100,100,100,0.15)">🏛</div>
+        <div class="sec-title">Institucional & Comunicação</div>
+        <span class="sec-count">6 links</span>
+      </div>
+      <div class="cards-grid">
+
+        <div class="p-card" data-cat="institucional" data-txt="Como entrar em contato com a OAB SP pelo Fale Conosco do site? O formulário de contato está em www2.oabsp.org.br/asp/fale_conosco/fale_conosco01.asp. O telefone da Central de Relacionamento é (11) 3291-3777.">
+          <div class="p-card-head"><div><span class="p-tag t-institucional">📩 Contato</span><div class="p-title">Fale Conosco — Central (11) 3291-3777</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como contatar a OAB SP? <span class="hl">Fale Conosco</span> em www2.oabsp.org.br/fale_conosco. Central de Relacionamento: <span class="hl2">(11) 3291-3777</span>. Sede: <span class="hl3">Pça da Sé, 385 – Centro – SP</span>.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www2.oabsp.org.br/asp/fale_conosco/fale_conosco01.asp" target="_blank">www2.oabsp.org.br › fale_conosco</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="institucional" data-txt="Como acessar o Jornal da Advocacia da OAB SP? O Jornal da Advocacia está em oabsp.org.br/noticias, listado no menu do site oficial.">
+          <div class="p-card-head"><div><span class="p-tag t-institucional">📰 Comunicação</span><div class="p-title">Jornal da Advocacia</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como acessar o <span class="hl">Jornal da Advocacia</span> da OAB SP? Disponível em <span class="hl3">oabsp.org.br/noticias</span>.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www.oabsp.org.br/noticias" target="_blank">oabsp.org.br/noticias</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="institucional" data-txt="Como acessar a Sala de Imprensa da OAB SP? O serviço está em oabsp.org.br/sala-de-imprensa, listado no menu oficial do site.">
+          <div class="p-card-head"><div><span class="p-tag t-institucional">📢 Imprensa</span><div class="p-title">Sala de Imprensa</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como acessar a <span class="hl">Sala de Imprensa</span> da OAB SP? Disponível em <span class="hl3">oabsp.org.br/sala-de-imprensa</span>.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www.oabsp.org.br/sala-de-imprensa" target="_blank">oabsp.org.br/sala-de-imprensa</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="institucional" data-txt="Como acessar a página de Proteção de Dados da OAB SP? O serviço está em oabsp.org.br/protecao-de-dados, listado no menu oficial.">
+          <div class="p-card-head"><div><span class="p-tag t-institucional">🔒 LGPD</span><div class="p-title">Proteção de Dados</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como acessar a página de <span class="hl">Proteção de Dados</span> da OAB SP? Disponível em <span class="hl3">oabsp.org.br/protecao-de-dados</span>.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www.oabsp.org.br/protecao-de-dados" target="_blank">oabsp.org.br/protecao-de-dados</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="institucional" data-txt="Como acessar a Memória OAB SP no site? O acervo histórico está em oabsp.org.br/memoria-oab-sp, listado no menu de Serviços e Informações.">
+          <div class="p-card-head"><div><span class="p-tag t-institucional">🗂 Memória</span><div class="p-title">Memória OAB SP</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como acessar a <span class="hl">Memória OAB SP</span>? Disponível em <span class="hl3">oabsp.org.br/memoria-oab-sp</span>, listado no menu de Serviços e Informações.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www.oabsp.org.br/memoria-oab-sp" target="_blank">oabsp.org.br/memoria-oab-sp</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+        <div class="p-card" data-cat="institucional" data-txt="Como acessar o Cultural OAB SP no site? O programa Cultural está em oabsp.org.br/p/cultural-oab-sp, listado no menu de acesso rápido do site oficial.">
+          <div class="p-card-head"><div><span class="p-tag t-institucional">🎭 Cultural</span><div class="p-title">Cultural OAB SP</div></div></div>
+          <div class="p-body"><div class="p-prompt">Como acessar o <span class="hl">Cultural OAB SP</span>? Disponível em <span class="hl3">oabsp.org.br/p/cultural-oab-sp</span>, listado no acesso rápido do site.</div></div>
+          <div class="p-foot"><a class="p-link" href="https://www.oabsp.org.br/p/cultural-oab-sp" target="_blank">oabsp.org.br/p/cultural-oab-sp</a><button class="btn-cp" onclick="cp(this)">Copiar</button></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ════ E-MAIL DA ADVOCACIA & TEMPLATES ════ -->
+    <div class="section-block" data-cat="email" id="blk-email">
+      <div class="sec-head">
+        <div class="sec-icon" style="background:rgba(26,127,75,0.15)">✉️</div>
+        <div class="sec-title">Email da Advocacia & Modelos de Comunicação Interna</div>
+        <span class="sec-count">12 modelos</span>
+        <a class="sec-url" href="https://webmail.oabsp.org.br" target="_blank">webmail.oabsp.org.br</a>
+      </div>
+      <div class="info-box">
+        O serviço <strong>Email da Advocacia</strong> está confirmado no site oabsp.org.br com acesso em <strong>webmail.oabsp.org.br</strong>. Os modelos abaixo são prompts para geração de e-mails internos baseados nos serviços e departamentos confirmados.
+      </div>
+      <div class="email-grid">
+
+        <div class="e-card" data-cat="email" data-txt="Redija um e-mail interno da OAB SP de um funcionário da área de Atualização Cadastral (op=9) para um advogado, informando que há pendência cadastral e orientando o acesso pelo link da área restrita www2.oabsp.org.br.">
+          <div class="e-head">
+            <div class="e-from">Remetente: <strong>Depto. Cadastral — OAB SP</strong></div>
+            <span class="e-subj">op=9 · Área Restrita</span>
+          </div>
+          <div class="e-body">
+            <div class="e-title">Pendência de Atualização Cadastral</div>
+            <div class="e-prompt">Redija e-mail interno da OAB SP informando pendência de <span class="hl">Atualização Cadastral</span> e orientando acesso via <span class="hl">www2.oabsp.org.br</span>, parâmetro <span class="hl">op=9</span>.</div>
+          </div>
+          <div class="e-foot"><button class="btn-cp" onclick="cp(this)">Copiar prompt</button></div>
+        </div>
+
+        <div class="e-card" data-cat="email" data-txt="Redija um e-mail da OAB SP para advogado orientando sobre o acesso ao serviço de Intimações (Recorte Digital) na área restrita. Conforme o site oabsp.org.br/servicos, para consultar intimações é necessário fazer o cadastro na área restrita para ter acesso ao Recorte Digital (op=1 em www2.oabsp.org.br).">
+          <div class="e-head">
+            <div class="e-from">Remetente: <strong>Depto. Intimações — OAB SP</strong></div>
+            <span class="e-subj">op=1 · Recorte Digital</span>
+          </div>
+          <div class="e-body">
+            <div class="e-title">Acesso ao Recorte Digital — Intimações</div>
+            <div class="e-prompt">Redija e-mail orientando sobre acesso ao <span class="hl">Recorte Digital</span> (Intimações). Conforme site OAB SP: necessário cadastro na área restrita. Acesso via <span class="hl">op=1</span> em www2.oabsp.org.br.</div>
+          </div>
+          <div class="e-foot"><button class="btn-cp" onclick="cp(this)">Copiar prompt</button></div>
+        </div>
+
+        <div class="e-card" data-cat="email" data-txt="Redija um e-mail interno da OAB SP de funcionário da área Financeiro (op=38) para outro departamento, informando sobre procedimento de acesso ao financeiro na área restrita www2.oabsp.org.br e mencionando o programa Anuidade de Volta disponível no site oabsp.org.br/servicos.">
+          <div class="e-head">
+            <div class="e-from">Remetente: <strong>Depto. Financeiro — OAB SP</strong></div>
+            <span class="e-subj">op=38 · Anuidade de Volta</span>
+          </div>
+          <div class="e-body">
+            <div class="e-title">Procedimento Financeiro — Anuidade de Volta</div>
+            <div class="e-prompt">Redija e-mail interno sobre acesso ao <span class="hl">Financeiro</span> (op=38) e mencione o programa <span class="hl">Anuidade de Volta</span> disponível em oabsp.org.br/servicos.</div>
+          </div>
+          <div class="e-foot"><button class="btn-cp" onclick="cp(this)">Copiar prompt</button></div>
+        </div>
+
+        <div class="e-card" data-cat="email" data-txt="Redija um e-mail da Ouvidoria da OAB SP (www2.oabsp.org.br/asp/ouvidoria) respondendo à manifestação de um advogado, informando o protocolo de atendimento. O telefone da Central de Relacionamento é (11) 3291-3777 e a sede de atendimento é na Praça da Sé, 385, Centro, São Paulo/SP.">
+          <div class="e-head">
+            <div class="e-from">Remetente: <strong>Ouvidoria — OAB SP</strong></div>
+            <span class="e-subj">Manifestação recebida</span>
+          </div>
+          <div class="e-body">
+            <div class="e-title">Resposta da Ouvidoria</div>
+            <div class="e-prompt">Redija resposta da <span class="hl">Ouvidoria OAB SP</span> a manifestação de advogado. Incluir Central <span class="hl">(11) 3291-3777</span> e endereço <span class="hl">Pça da Sé, 385</span>.</div>
+          </div>
+          <div class="e-foot"><button class="btn-cp" onclick="cp(this)">Copiar prompt</button></div>
+        </div>
+
+        <div class="e-card" data-cat="email" data-txt="Redija um e-mail da área de Certidões da OAB SP (www2.oabsp.org.br/asp/dotnet/Index/Servicos/Advocacia?page=4) para advogado informando que todos os processos da Ordem estão digitalizados e orientando como solicitar certidões online.">
+          <div class="e-head">
+            <div class="e-from">Remetente: <strong>Depto. Certidões — OAB SP</strong></div>
+            <span class="e-subj">page=4 · Processos digitalizados</span>
+          </div>
+          <div class="e-body">
+            <div class="e-title">Solicitação de Certidões — Online</div>
+            <div class="e-prompt">Redija e-mail orientando sobre <span class="hl">Certidões</span> online (page=4). Informar que <span class="hl">todos os processos da Ordem estão digitalizados</span>.</div>
+          </div>
+          <div class="e-foot"><button class="btn-cp" onclick="cp(this)">Copiar prompt</button></div>
+        </div>
+
+        <div class="e-card" data-cat="email" data-txt="Redija um e-mail da área de Processo Eletrônico da OAB SP (área restrita op=45) para advogado informando sobre o suporte disponível nos 947 pontos de atendimento com computadores com software de peticionamento eletrônico e apoio nos sistemas e-SAJ e PJe.">
+          <div class="e-head">
+            <div class="e-from">Remetente: <strong>Processo Eletrônico — OAB SP</strong></div>
+            <span class="e-subj">op=45 · e-SAJ e PJe</span>
+          </div>
+          <div class="e-body">
+            <div class="e-title">Suporte ao Processo Eletrônico</div>
+            <div class="e-prompt">Redija e-mail sobre suporte ao <span class="hl">Processo Eletrônico (op=45)</span>. Mencionar <span class="hl">947 pontos de atendimento</span> com software de peticionamento e suporte a <span class="hl">e-SAJ e PJe</span>.</div>
+          </div>
+          <div class="e-foot"><button class="btn-cp" onclick="cp(this)">Copiar prompt</button></div>
+        </div>
+
+        <div class="e-card" data-cat="email" data-txt="Redija um e-mail interno da OAB SP comunicando equipe de atendimento sobre o Agendamento Online (www2.oabsp.org.br/asp/dotnet/Index/Servicos/Advocacia?page=1) e reforçando que a OAB SP conta com 947 pontos de atendimento por todo o estado com salas de coworking, wi-fi gratuito, salas de reunião e computadores.">
+          <div class="e-head">
+            <div class="e-from">Remetente: <strong>Atendimento — OAB SP</strong></div>
+            <span class="e-subj">page=1 · 947 pontos</span>
+          </div>
+          <div class="e-body">
+            <div class="e-title">Comunicado — Agendamento Online</div>
+            <div class="e-prompt">Redija comunicado interno sobre <span class="hl">Agendamento Online (page=1)</span>. Reforçar: OAB SP tem <span class="hl">947 pontos de atendimento</span> com <span class="hl">coworking, wi-fi e salas de reunião</span>.</div>
+          </div>
+          <div class="e-foot"><button class="btn-cp" onclick="cp(this)">Copiar prompt</button></div>
+        </div>
+
+        <div class="e-card" data-cat="email" data-txt="Redija um e-mail da área de Inscrições da OAB SP (www2.oabsp.org.br/asp/dotnet/Index/Servicos/Advocacia?page=2) para advogado recém inscrito informando os serviços digitais disponíveis no site oabsp.org.br/servicos, incluindo área restrita, intimações via Recorte Digital e Processo Eletrônico.">
+          <div class="e-head">
+            <div class="e-from">Remetente: <strong>Inscrições — OAB SP</strong></div>
+            <span class="e-subj">page=2 · Boas-vindas</span>
+          </div>
+          <div class="e-body">
+            <div class="e-title">Boas-vindas ao Inscrito — Serviços Digitais</div>
+            <div class="e-prompt">Redija e-mail de boas-vindas ao <span class="hl">novo inscrito (page=2)</span>. Apresentar: <span class="hl">área restrita, Recorte Digital, Processo Eletrônico</span> disponíveis em oabsp.org.br/servicos.</div>
+          </div>
+          <div class="e-foot"><button class="btn-cp" onclick="cp(this)">Copiar prompt</button></div>
+        </div>
+
+        <div class="e-card" data-cat="email" data-txt="Redija um e-mail da Comissão de Sociedades de Advocacia da OAB SP (oabsp.org.br/comissao/sociedades-de-advocacia) para advogado sobre procedimento de registro de sociedade, reforçando que todos os processos da Ordem estão digitalizados.">
+          <div class="e-head">
+            <div class="e-from">Remetente: <strong>Comissão Sociedades — OAB SP</strong></div>
+            <span class="e-subj">Sociedades de Advocacia</span>
+          </div>
+          <div class="e-body">
+            <div class="e-title">Registro de Sociedade de Advocacia</div>
+            <div class="e-prompt">Redija e-mail da <span class="hl">Comissão de Sociedades</span> (oabsp.org.br/comissao/sociedades-de-advocacia) sobre registro de sociedade. Reforçar que <span class="hl">todos os processos estão digitalizados</span>.</div>
+          </div>
+          <div class="e-foot"><button class="btn-cp" onclick="cp(this)">Copiar prompt</button></div>
+        </div>
+
+        <div class="e-card" data-cat="email" data-txt="Redija um e-mail do Email da Advocacia (webmail.oabsp.org.br) — suporte técnico da OAB SP — para advogado com problema de acesso ao webmail, orientando contato pela Central de Relacionamento (11) 3291-3777 ou pelo Fale Conosco em www2.oabsp.org.br/asp/fale_conosco/fale_conosco01.asp.">
+          <div class="e-head">
+            <div class="e-from">Remetente: <strong>Suporte — webmail.oabsp.org.br</strong></div>
+            <span class="e-subj">Email da Advocacia · acesso</span>
+          </div>
+          <div class="e-body">
+            <div class="e-title">Suporte ao Email da Advocacia (Webmail)</div>
+            <div class="e-prompt">Redija e-mail de suporte ao <span class="hl">webmail.oabsp.org.br</span>. Direcionar para Central <span class="hl">(11) 3291-3777</span> ou Fale Conosco (www2.oabsp.org.br).</div>
+          </div>
+          <div class="e-foot"><button class="btn-cp" onclick="cp(this)">Copiar prompt</button></div>
+        </div>
+
+        <div class="e-card" data-cat="email" data-txt="Redija um e-mail do Tribunal de Ética e Disciplina (TED) da OAB SP (oabsp.org.br/tribunal-de-etica-e-disciplina) para advogado notificando sobre processo digitalizado, reforçando que todos os processos do TED estão digitalizados conforme informado na página oficial de serviços.">
+          <div class="e-head">
+            <div class="e-from">Remetente: <strong>TED — Tribunal de Ética OAB SP</strong></div>
+            <span class="e-subj">TED · processo digitalizado</span>
+          </div>
+          <div class="e-body">
+            <div class="e-title">Notificação TED — Processo Digitalizado</div>
+            <div class="e-prompt">Redija notificação do <span class="hl">TED OAB SP</span> (oabsp.org.br/tribunal-de-etica-e-disciplina) reforçando que <span class="hl">todos os processos estão digitalizados</span>.</div>
+          </div>
+          <div class="e-foot"><button class="btn-cp" onclick="cp(this)">Copiar prompt</button></div>
+        </div>
+
+        <div class="e-card" data-cat="email" data-txt="Redija um e-mail interno da OAB SP comunicando toda a equipe de atendimento sobre os novos serviços disponíveis na página oabsp.org.br/servicos: Marketplace de Lawtechs (marketplace.oabsp.org.br), Aceleradora de Escritórios e Sandbox Regulatório que testa projetos de inovação em um ambiente controlado.">
+          <div class="e-head">
+            <div class="e-from">Remetente: <strong>Gestão — OAB SP</strong></div>
+            <span class="e-subj">Novos serviços · Lawtechs</span>
+          </div>
+          <div class="e-body">
+            <div class="e-title">Comunicado — Marketplace, Aceleradora e Sandbox</div>
+            <div class="e-prompt">Redija comunicado interno sobre: <span class="hl">Marketplace Lawtechs</span> (marketplace.oabsp.org.br), <span class="hl">Aceleradora de Escritórios</span> e <span class="hl">Sandbox Regulatório</span> (testa inovações em ambiente controlado).</div>
+          </div>
+          <div class="e-foot"><button class="btn-cp" onclick="cp(this)">Copiar prompt</button></div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="no-result"><p>🔍 Nenhum prompt encontrado para este termo.</p></div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<div id="toast">✅ Prompt copiado!</div>
+
+<script>
+// ── count cards ──
+function recount(){
+  const cats=['all','restrita','inscricao','certif','financeiro','servicos','etica','universo','institucional','email'];
+  const all=document.querySelectorAll('.p-card, .e-card');
+  document.getElementById('cnt-all').textContent=all.length;
+  document.getElementById('total-num').textContent=all.length;
+  document.getElementById('vis-count').textContent=all.length;
+  cats.filter(c=>c!=='all').forEach(c=>{
+    const el=document.getElementById('cnt-'+c);
+    if(el) el.textContent=document.querySelectorAll(`[data-cat="${c}"]`).length;
+  });
+}
+recount();
+
+// ── category filter ──
+function showCat(cat,btn){
+  // sync sidebar + pill clicks
+  document.querySelectorAll('.sb-link,.pill').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+
+  const blocks=document.querySelectorAll('.section-block');
+  let vis=0;
+  blocks.forEach(b=>{
+    const cats=(b.dataset.cat||'').split(' ');
+    const show=cat==='all'||cats.includes(cat)||cats.includes('all');
+    b.style.display=show?'':'none';
+  });
+
+  // count visible cards
+  let vCards=0;
+  document.querySelectorAll('.p-card,.e-card').forEach(c=>{
+    const cc=c.dataset.cat||'';
+    const show=cat==='all'||cc===cat;
+    c.style.display=show?'flex':'none';
+    if(show) vCards++;
+  });
+
+  document.getElementById('vis-count').textContent=vCards;
+  document.getElementById('no-result').classList.toggle('on',vCards===0);
+
+  // scroll top
+  document.getElementById('content').scrollTo?document.getElementById('content').scrollTo(0,0):window.scrollTo(0,0);
+}
+
+// ── search ──
+function runSearch(){
+  const q=document.getElementById('q').value.toLowerCase().trim();
+  if(!q){showCat('all',null);return;}
+  let vis=0;
+  document.querySelectorAll('.section-block').forEach(b=>b.style.display='');
+  document.querySelectorAll('.p-card,.e-card').forEach(c=>{
+    const txt=(c.dataset.txt||'').toLowerCase()+(c.querySelector('.p-title,.e-title')?.textContent||'').toLowerCase();
+    const show=txt.includes(q);
+    c.style.display=show?'flex':'none';
+    if(show) vis++;
+  });
+  document.getElementById('vis-count').textContent=vis;
+  document.getElementById('no-result').classList.toggle('on',vis===0);
+  // hide empty blocks
+  document.querySelectorAll('.section-block').forEach(b=>{
+    const hasVisible=[...b.querySelectorAll('.p-card,.e-card')].some(c=>c.style.display!=='none');
+    if(b.id!=='blk-mapa'&&b.id!=='blk-enderecos') b.style.display=hasVisible?'':'none';
+  });
+}
+
+// ── copy ──
+function cp(btn){
+  const card=btn.closest('.p-card, .e-card');
+  const txt=card.dataset.txt||'';
+  navigator.clipboard.writeText(txt).then(()=>{
+    const orig=btn.textContent;
+    btn.textContent='✓ Copiado!';
+    btn.classList.add('ok');
+    setTimeout(()=>{btn.textContent=orig;btn.classList.remove('ok');},2200);
+    const t=document.getElementById('toast');
+    t.classList.add('on');
+    setTimeout(()=>t.classList.remove('on'),2400);
+  });
+}
+</script>
+</body>
+</html>
